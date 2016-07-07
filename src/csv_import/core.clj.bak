@@ -14,24 +14,21 @@
   (sql/insert! db 
               :promocodes2 {:model row}))
 
-(defn parse-row [row]
-  (first
-    (first
-      (csv/parse-csv row))))
+(defn parse [file]
+  (insert-db
+    (csv/parse-csv file)))
 
+;(defn open-file [fname]  
+;  (with-open [file (io/reader fname)] 
+;    (doall (map (comp first csv/parse-csv) (line-seq file))))) 
 
-;(defn parse-row [row]
-;  (let [v (first (csv/parse-csv row))]
-;    (zipmap [:model] v)))
-
-(defn read-file [fname]
-  (with-open [rdr (io/reader fname)]
-    (doseq [line (line-seq rdr)]
-      (insert-db
-        (parse-row line)))))
+(defn open-file [fname]  
+  (with-open [file (io/reader fname)] 
+    (parse file)))
 
 (defn -main [& args]
   (->
     filepath
-    read-file))
+    open-file
+    ))
 
