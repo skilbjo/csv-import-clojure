@@ -4,22 +4,17 @@
             [clojure.java.jdbc :as sql])
   (:gen-class))
 
-(def filepath "./data/direct_mail.promocodes22.csv")
+(def filepath "./data/direct_mail.promocodes.csv")
 
 (def db {:subprotocol "postgresql"
-         :subname "//docker:5432/direct_mail"
+         :subname "//localhost:5432/direct_mail"
          :user "john.skilbeck"})
 
-; make this a vector of maps
 (defn insert-db 
   [record]
-  (println [record])
+  (clojure.pprint/pprint record)
   (sql/insert! db
-    :promocodes2 [record]))
-;  (let [row (into [] (map record))]
-;    (println row)
-;    (sql/insert! db
-;      :promocodes2 row)))
+    :promocodes record))    
     
 
 (defn parse-row [row]
@@ -29,8 +24,12 @@
             (keyword "\"Add Suppresions\"")
             (keyword "\"Selection Strategy Notes\"") 
             (keyword "\"New/Remail\"")
+            (keyword "\"Cell Segment\"")
+            (keyword "\"Test Description\"")
             (keyword "\"Mail Date\"")
+            (keyword "\"Promo Codes\"")
             (keyword "\"Mailed Quantity\"")
+            (keyword "\"p_1\"")
             (keyword "\"Actual Mailed Quantity\"")
             ] v)))
 
@@ -40,12 +39,10 @@
       (->
         line
         parse-row
-        insert-db
-        ))))
+        insert-db))))
 
 (defn -main [& args]
   (->
     filepath
-    read-file
-    ))
+    read-file))
 
