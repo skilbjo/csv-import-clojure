@@ -7,7 +7,7 @@
             [clj-time.format :as f])
   (:gen-class))
 
-(def filepath "./data/direct_mail.promocodes22.csv")
+(def filepath "./data/direct_mail.promocodes.csv")
 
 (def db {:subprotocol "postgresql"
          :subname "//docker:5432/direct_mail"
@@ -27,14 +27,16 @@
                      (keyword "\"Actual Mailed Quantity\"") parse-int}))
 
 (defn insert-db [record]
-  (sql/insert! db :promocodes2 (transform record)))
+  (sql/insert! db :promocodes (transform record)))
 
 (defn parse-row [row]
   (let [v (first(csv/parse-csv row))]
     (zipmap 
       [:model :datasource 
        (keyword "\"Add Suppresions\"") (keyword "\"Selection Strategy Notes\"") 
-       (keyword "\"New Remail\"") (keyword "\"Mail Date\"") (keyword "\"Mailed Quantity\"") (keyword "\"Actual Mailed Quantity\"")
+       (keyword "\"New Remail\"") (keyword "\"Cell Segment\"") (keyword "\"Test Description\"") 
+       (keyword "\"Mail Date\"") (keyword "\"Promo Codes\"") (keyword "\"Mailed Quantity\"") 
+       :p_1 (keyword "\"Actual Mailed Quantity\"")
       ] v)))
 
 (defn read-file [fname]
